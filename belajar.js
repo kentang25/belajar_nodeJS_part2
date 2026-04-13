@@ -53,32 +53,66 @@
 
 // getUserandPost();
 
+// async function myFunction()
+        // {
+        //     return "Hello World";
+        // }
 
-async function myFunction()
-{
-    return "Hello World";
-}
+        // const result = myFunction();
+        // console.log(result);
 
-const result = myFunction();
-console.log(result);
+        // myFunction()
+        // .then(result => console.log(result))
+        // .catch(error => console.error(error))
 
-myFunction()
-.then(result => console.log(result))
-.catch(error => console.error(error))
+        // const util = require("util");
+        // const fs   = require("fs");
 
-const util = require("util");
-const fs   = require("fs");
+        // const readFile = util.promisify(fs.readFile);
 
-const readFile = util.promisify(fs.readFile);
+        // async function readMyFile()
+        // {
+        //     try{
+        //         const data = await readFile("hehe.txt", "utf-8");
+        //         console.log(data);
+        //     }catch(error){
+        //         console.error(error);
+        //     }
+        // }
 
-async function readMyFile()
-{
-    try{
-        const data = await readFile("hehe.txt", "utf-8");
-        console.log(data);
-    }catch(error){
-        console.error(error);
-    }
-}
+        // readMyFile();
 
-readMyFile();
+const http = require('http');
+const { URL }  = require('url');
+const querystring = require('querystring');
+
+const PORT = 3000;
+
+const server = http.createServer((req, res) => {
+    
+    const baseUrl = 'http://' + req.headers.host + '/';
+    const parsedUrl = new URL(req.url, baseUrl);
+
+    const params = Object.fromEntries(parsedUrl.searchParams.entries());
+
+    const queryObject = {
+        name : 'John Doe',
+        age : 30,
+        city : 'New York'
+    };
+
+    const queryStr = querystring.stringify(queryObject);
+
+    res.writeHead(200, {'Content-Type' : 'application/json'});
+    res.end(JSON.stringify({
+        path : parsedUrl.pathname,
+        query : params,
+        exampleQueryString : queryStr
+    }, null , 2));
+
+});
+
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/`);
+});
+

@@ -85,34 +85,89 @@
 const http = require('http');
 const { URL }  = require('url');
 const querystring = require('querystring');
+const fs = require('fs').promises;
 
-const PORT = 3000;
+// const PORT = 3000;
 
-const server = http.createServer((req, res) => {
+// fs.readFile('hehe.txt', 'utf8', (err, data) => {
+//     if(err){
+//         console.error('error reading file:'. err);
+//         return;
+//     }
+//     console.log('file content:', data);
+// });
+
+// async function readFileExample()
+// {
+//     try{
+//         const data = await fs.promises.readFile('hehe.txt', 'utf8');
+//         console.log('file content:', data);
+//     }catch(error){
+//         console.error('error reading file:', error);
+//     }
+// }
+
+// readFileExample();
+
+// const { promisify } = require('util');
+// const readFileAsync = promisify(fs.readFile);
+
+// async function readFileExample2()
+// {
+//     try{
+//         const data = await readFileAsync('hehe.txt', 'utf8');
+//         console.log('file content:', data);
+//     }catch(error){
+//         console.error('error reading file:', error);
+//     }
+// }
+
+// readFileExample2();
+
+async function writeFileExample()
+{
+    try{
+        await fs.writeFile('hehe.txt', 'Hello World', 'utf8');
+        console.log('file written successfully');
+
+        const data = {name : 'john Doe', age: 30 , city : 'New York'};
+        await fs.writeFile('data.json', JSON.stringify(data, null, 2), 'utf8');
+        console.log('data file written successfully');
+
+    }catch(error){
+        console.error('error writing file:', error);
+    }
+}
+
+writeFileExample();
+// const server = http.createServer((req, res) => {
+
     
-    const baseUrl = 'http://' + req.headers.host + '/';
-    const parsedUrl = new URL(req.url, baseUrl);
+//     const baseUrl = 'http://' + req.headers.host + '/';
+//     const parsedUrl = new URL(req.url, baseUrl);
 
-    const params = Object.fromEntries(parsedUrl.searchParams.entries());
+//     const params = Object.fromEntries(parsedUrl.searchParams.entries());
 
-    const queryObject = {
-        name : 'John Doe',
-        age : 30,
-        city : 'New York'
-    };
+//     const queryObject = {
+//         name : 'John Doe',
+//         age : 30,
+//         city : 'New York'
+//     };
 
-    const queryStr = querystring.stringify(queryObject);
+//     const queryStr = querystring.stringify(queryObject);
 
-    res.writeHead(200, {'Content-Type' : 'application/json'});
-    res.end(JSON.stringify({
-        path : parsedUrl.pathname,
-        query : params,
-        exampleQueryString : queryStr
-    }, null , 2));
+//     res.writeHead(200, {'Content-Type' : 'application/json'});
+//     res.end(JSON.stringify({
+//         path : parsedUrl.pathname,
+//         query : params,
+//         exampleQueryString : queryStr
+//     }, null , 2));
 
-});
 
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
+
+//  });
+
+// server.listen(PORT, () => {
+//     console.log(`Server running at http://localhost:${PORT}/`);
+// });
 

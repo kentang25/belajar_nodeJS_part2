@@ -82,10 +82,13 @@
 
         // readMyFile();
 
-const http = require('http');
-const { URL }  = require('url');
-const querystring = require('querystring');
+// const http = require('http');
+// const { URL }  = require('url');
+// const querystring = require('querystring');
+
 const fs = require('fs').promises;
+// const { pipeline } = require('stream/promises');
+// const { Readable } = require('stream');
 
 // const PORT = 3000;
 
@@ -124,22 +127,96 @@ const fs = require('fs').promises;
 
 // readFileExample2();
 
-async function writeFileExample()
+// async function writeFileExample()
+// {
+//     try{
+//         await fs.writeFile('hehe.txt', 'Hello World', 'utf8');
+//         console.log('file written successfully');
+
+//         const data = {name : 'john Doe', age: 30 , city : 'New York'};
+//         await fs.writeFile('data.json', JSON.stringify(data, null, 2), 'utf8');
+//         console.log('data file written successfully');
+
+//     }catch(error){
+//         console.error('error writing file:', error);
+//     }
+// }
+
+// writeFileExample();
+
+// async function appendFileExample()
+// {
+//     try{
+//         const logEntry = `log entry at ${new Date().toISOString()}: Application started\n`;
+//         await fs.appendFile('app.log', logEntry, 'utf8');
+
+//         console.log('log entry appended successfully');
+//     }catch(error){
+//         console.error('error appending to file:', error);
+//     }
+// }
+
+// appendFileExample();
+
+// async function writeWithFileHandle()
+// {
+//     let fileHandle;
+
+//     try{
+//         fileHandle = await fs.open('hehe.txt', 'w');
+
+//         await fileHandle.writeFile('Hello World', 'utf8');
+        
+//         console.log('file written successfully using FileHandle');
+//     }catch(error){
+//         console.error('error writing file with FileHandle:', error);        
+//     }finally{
+//         if(fileHandle){
+//             await fileHandle.close();
+//         }
+//     }
+// }
+
+// writeWithFileHandle();
+
+// async function writeLargeFile()
+// {
+//     const data = Array(10).fill('This is a line in a large file.').map((_,i) => `Line ${i + 1} ${'hello'.repeat(100)}\n`);
+
+//     const readable = Readable.from(data);
+
+//     const writable = fs.createWriteStream('hehe.txt');
+
+//     try{
+//         await pipeline(readable, writable);
+//         console.log('large file written successfully');
+//     }catch(error){
+//         console.error('error writing large file:', error);
+//     }
+// }
+
+// writeLargeFile();
+
+async function deleteFile()
 {
+    const filePath = 'hehe.txt';
+
     try{
-        await fs.writeFile('hehe.txt', 'Hello World', 'utf8');
-        console.log('file written successfully');
+        await fs.access(filePath);
 
-        const data = {name : 'john Doe', age: 30 , city : 'New York'};
-        await fs.writeFile('data.json', JSON.stringify(data, null, 2), 'utf8');
-        console.log('data file written successfully');
-
+        await fs.unlink(filePath);
+        console.log('file deleted successfully');
     }catch(error){
-        console.error('error writing file:', error);
+        if(error.code === 'ENOENT'){
+            console.log('file does not exist, nothing to delete');
+        }else{
+            console.error('error deleting file:', error);
+        }
     }
 }
 
-writeFileExample();
+deleteFile();
+
 // const server = http.createServer((req, res) => {
 
     

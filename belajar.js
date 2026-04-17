@@ -92,6 +92,8 @@ const fs = require('fs').promises;
 
 // const PORT = 3000;
 
+// --- fs.read dan fs.write --- //
+
 // fs.readFile('hehe.txt', 'utf8', (err, data) => {
 //     if(err){
 //         console.error('error reading file:'. err);
@@ -158,26 +160,26 @@ const fs = require('fs').promises;
 
 // appendFileExample();
 
-// async function writeWithFileHandle()
-// {
-//     let fileHandle;
+async function writeWithFileHandle()
+{
+    let fileHandle;
 
-//     try{
-//         fileHandle = await fs.open('hehe.txt', 'w');
+    try{
+        fileHandle = await fs.open('hehe.txt', 'w');
 
-//         await fileHandle.writeFile('Hello World', 'utf8');
+        await fileHandle.writeFile('Hello World', 'utf8');
         
-//         console.log('file written successfully using FileHandle');
-//     }catch(error){
-//         console.error('error writing file with FileHandle:', error);        
-//     }finally{
-//         if(fileHandle){
-//             await fileHandle.close();
-//         }
-//     }
-// }
+        console.log('file written successfully using FileHandle');
+    }catch(error){
+        console.error('error writing file with FileHandle:', error);        
+    }finally{
+        if(fileHandle){
+            await fileHandle.close();
+        }
+    }
+}
 
-// writeWithFileHandle();
+writeWithFileHandle();
 
 // async function writeLargeFile()
 // {
@@ -197,25 +199,62 @@ const fs = require('fs').promises;
 
 // writeLargeFile();
 
-async function deleteFile()
+// --- fs.unlink --- //
+
+// async function deleteFile()
+// {
+//     const filePath = 'hehe.txt';
+
+//     try{
+//         await fs.access(filePath);
+
+//         await fs.unlink(filePath);
+//         console.log('file deleted successfully');
+//     }catch(error){
+//         if(error.code === 'ENOENT'){
+//             console.log('file does not exist, nothing to delete');
+//         }else{
+//             console.error('error deleting file:', error);
+//         }
+//     }
+// }
+
+// deleteFile();
+
+// fs.renaming & fs.movingfile ---
+
+async function renameFile()
 {
-    const filePath = 'hehe.txt';
+    const oldPath = 'hehe.txt';
+    const newPath = 'hello.txt';
 
     try{
-        await fs.access(filePath);
+        await fs.access(oldPath);
 
-        await fs.unlink(filePath);
-        console.log('file deleted successfully');
-    }catch(error){
-        if(error.code === 'ENOENT'){
-            console.log('file does not exist, nothing to delete');
-        }else{
-            console.error('error deleting file:', error);
+        try{
+            await fs.access(newPath);
+            console.log('file with new name already exists, cannot rename');
+            return;
+        }catch(error){
+            if(error.code !== 'ENOENT'){
+                console.error('error checking new file name:', error);
+                return;
+            }
+
+            await fs.rename(oldPath, newPath);
+            console.log('file renamed successfully');
         }
-    }
+    }catch(error){
+            if(error.code === 'ENOENT'){
+                console.log('file with new name does not exist, proceading with rename');
+            }else{
+                console.error('error checking new file name:', error);
+                return;
+            }
+        }
 }
 
-deleteFile();
+renameFile();
 
 // const server = http.createServer((req, res) => {
 

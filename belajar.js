@@ -1,5 +1,7 @@
 // const { resolve } = require("node:dns");
 
+const path = require('path');
+
 // function getUserPromise(userId)
 // {
 //     return new Promise(resolve => {
@@ -86,9 +88,33 @@
 // const { URL }  = require('url');
 // const querystring = require('querystring');
 
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
+// const path = require('path');
 // const { pipeline } = require('stream/promises');
 // const { Readable } = require('stream');
+
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+
+// --- event listener --- //
+emitter.on('userJoined', (username, userId) => {
+    console.log(`User ${username} with ID ${userId} has joined`);
+});
+
+emitter.emit('userJoined', 'John Doe', 12345);
+
+emitter.once('connection', () => {
+    console.log('A new connection has been established');
+});
+
+emitter.emit('connection');
+emitter.emit('connection');
+
+emitter.on('error', (error) => {
+    console.error('An error occurred:', error);
+});
+
+emitter.emit('error', new Error('Something went wrong'));
 
 // const PORT = 3000;
 
@@ -160,26 +186,26 @@ const fs = require('fs').promises;
 
 // appendFileExample();
 
-async function writeWithFileHandle()
-{
-    let fileHandle;
+// async function writeWithFileHandle()
+// {
+//     let fileHandle;
 
-    try{
-        fileHandle = await fs.open('hehe.txt', 'w');
+//     try{
+//         fileHandle = await fs.open('hehe.txt', 'w');
 
-        await fileHandle.writeFile('Hello World', 'utf8');
+//         await fileHandle.writeFile('Hello World', 'utf8');
         
-        console.log('file written successfully using FileHandle');
-    }catch(error){
-        console.error('error writing file with FileHandle:', error);        
-    }finally{
-        if(fileHandle){
-            await fileHandle.close();
-        }
-    }
-}
+//         console.log('file written successfully using FileHandle');
+//     }catch(error){
+//         console.error('error writing file with FileHandle:', error);        
+//     }finally{
+//         if(fileHandle){
+//             await fileHandle.close();
+//         }
+//     }
+// }
 
-writeWithFileHandle();
+// writeWithFileHandle();
 
 // async function writeLargeFile()
 // {
@@ -223,38 +249,100 @@ writeWithFileHandle();
 
 // fs.renaming & fs.movingfile ---
 
-async function renameFile()
-{
-    const oldPath = 'hehe.txt';
-    const newPath = 'hello.txt';
+// async function renameFile()
+// {
+//     const oldPath = 'hehe.txt';
+//     const newPath = 'hello.txt';
 
-    try{
-        await fs.access(oldPath);
+//     try{
+//         await fs.access(oldPath);
 
-        try{
-            await fs.access(newPath);
-            console.log('file with new name already exists, cannot rename');
-            return;
-        }catch(error){
-            if(error.code !== 'ENOENT'){
-                console.error('error checking new file name:', error);
-                return;
-            }
+//         try{
+//             await fs.access(newPath);
+//             console.log('file with new name already exists, cannot rename');
+//             return;
+//         }catch(error){
+//             if(error.code !== 'ENOENT'){
+//                 console.error('error checking new file name:', error);
+//                 return;
+//             }
 
-            await fs.rename(oldPath, newPath);
-            console.log('file renamed successfully');
-        }
-    }catch(error){
-            if(error.code === 'ENOENT'){
-                console.log('file with new name does not exist, proceading with rename');
-            }else{
-                console.error('error checking new file name:', error);
-                return;
-            }
-        }
-}
+//             await fs.rename(oldPath, newPath);
+//             console.log('file renamed successfully');
+//         }
+//     }catch(error){
+//             if(error.code === 'ENOENT'){
+//                 console.log('file with new name does not exist, proceading with rename');
+//             }else{
+//                 console.error('error checking new file name:', error);
+//                 return;
+//             }
+//         }
+// }
 
-renameFile();
+// renameFile();
+
+// async function batchRenameFiles()
+// {
+//     const directory = './image';
+//     const pattern = /^image(\d+)\.jpg$/;
+
+//     try{
+//         const files = await fs.readdir(directory);
+
+//         for(const file of files){
+//             const match = file.match(pattern);
+//             if(match){
+//                 const [_, number] = match;
+//                 const newName = `photo-${number, padStart(3, '0')}.jpg`;
+//                 const oldPath = path.join(directory, file);
+//                 const newPath = path.join(directory, newName);
+
+//                 if(oldPath !== newPath){
+//                     await fs.rename(oldPath, newPath);
+//                     console.log(`renamed ${file} to ${newName}`);
+//                 }
+//             }
+//         }
+
+//         console.log('batch rename completed');
+//     }catch(error){
+//         console.error('error batch renaming files:', error);
+//     }
+// }
+
+// batchRenameFiles();
+
+// --- end renaming and moving file --- //
+
+// async function moveFile()
+// {
+//     const sourceFile = 'hello.txt';
+//     const targetDir = 'destination';
+//     const targetFile = path.join(targetDir, 'hello.txt');
+
+//     try{
+//         await fs.access(sourceFile);
+
+//         await fs.mkdir(targetDir, {recursive: true});
+
+//         await fs.rename(sourceFile, targetFile);
+
+//         console.log('file moved successfully');
+//     }catch(error){
+//         if(error.code === 'ENOENT'){
+//             console.log('source file does not exist, cannot move');
+//         }else if(error.code === 'EACCES' || error.code === 'EPERM'){
+//             console.error('permission error moving file:', error);
+//         }else{
+//             console.error('error moving file:', error);
+//         }
+//     }
+// }
+
+// moveFile();
+
+
 
 // const server = http.createServer((req, res) => {
 

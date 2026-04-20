@@ -1,6 +1,7 @@
-const express = require('express');
-const app = express();
-const port = 8080;
+const express   = require('express');
+const path      = require('path');
+const app       = express();
+const port      = 8080;
 
 // --- Routing dan Routing multitaple ---
 
@@ -90,25 +91,101 @@ const port = 8080;
 
 // --- Error handling di Express ---
 
-app.get('/error', (req, res) => {    
-    throw new Error('Something went wrong!');
-});
+// app.get('/error', (req, res) => {    
+//     throw new Error('Something went wrong!');
+// });
 
 // async function nonExistentFunction(){
 //     return "This function does not exist";
 // }
 
-app.get('/async-error', async (req,res,next) => {
-    setTimeout(() => {
-        try{
-            const result = nonExistentFunction();
-            res.send(result);
-        }catch(error){
-            next(error);
-        }
-    }, 100);
+// app.get('/async-error', async (req,res,next) => {
+//     setTimeout(() => {
+//         try{
+//             const result = nonExistentFunction();
+//             res.send(result);
+//         }catch(error){
+//             next(error);
+//         }
+//     }, 100);
+// });
+
+// Serve static files from the "public" directory ---
+
+// app.use(express.static('public'));
+
+// app.use('/image', express.static(path.join(__dirname, 'image')));
+
+// app.get('/', (req, res) => {
+//     res.send(`
+//             <h1>Static Files Example</h1>
+//             <p>This page demonstrates serving static files with Express.</p>
+//             <img src="/image/gambar.png" alt="Example Image" width="300">
+//         `);
+// });
+
+// Routing in separate files ---
+
+const userRouter = express.Router();
+
+userRouter.use((req, res, next) => {
+    console.log('Users Router accessed at: ' , Date.now());
+    next();
 });
 
+userRouter.get('/user', (req, res) => {
+    res.send(`
+            <h2>Users List</h2>
+            <ul>
+                <li><a href="/users/1">User 1</a></li>
+                <li><a href="/users/2">User 2</a></li>
+                <li><a href="/users/3">User 3</a></li>
+            </ul>
+        `);
+});
+
+userRouter.get('/:id', (req, res) => {
+    res.send(`
+            <h2>User Profile</h2>
+            <p>User ID: ${req.params.id}</p>
+            <p><a href="/users">Back to user list</a></p>
+        `);
+});
+
+const protuctsRouter = express.Router();
+
+protuctsRouter.get('/', (req, res) => {
+    res.send(`
+            <h2>Products List</h2>
+            <ul>
+                <li><a href="/products/1">Product 1</a></li>
+                <li><a href="/products/2">Product 2</a></li>
+                <li><a href="/products/3">Product 3</a></li>
+            </ul>
+        `);
+});
+
+protuctsRouter.get('/:id', (req, res) => {
+    res.send(`
+            <h2>Product Details</h2>
+            <p>Product ID: ${req.params.id}</p>
+            <p><a href="/products">Back to product list</a></p>
+          `);
+});
+
+app.get('/', (req, res) => {
+    res.send(`
+            <h1>Express Separate Routes Example</h1>
+            <p>Navigate to different sections:</p>
+                <ul>
+                    <li><a href="/users">Users</a></li>
+                    <li><a href="/products">Products</a></li>
+                </ul>
+        `);
+});
+
+app.use('/users', userRouter);
+app.use('/products', protuctsRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
